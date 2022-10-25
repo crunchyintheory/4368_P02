@@ -5,6 +5,7 @@ using UnityEngine;
 public class SetupCardGameState : CardGameState
 {
     [SerializeField] private int _startingCardNumber = 104;
+    [SerializeField] private int _startingHandSize = 7;
     [SerializeField] private int _numPlayers = 2;
 
     private bool _activated = false;
