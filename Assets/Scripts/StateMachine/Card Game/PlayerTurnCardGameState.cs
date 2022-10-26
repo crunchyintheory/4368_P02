@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -23,7 +24,11 @@ public class PlayerTurnCardGameState : CardGameState
         this._playerTurnCount++;
         this._playerTurnTextUI.text = $"Player Turn: {this._playerTurnCount}";
         this._playerHandUI.text = $"Player Hand: {this._playerCardCount}";
-        StateMachine.Input.PressedConfirm += OnPressedConfirm;
+        this.StateMachine.Input.PressedConfirm += OnPressedConfirm;
+
+        // Temporary for demo purposes until an actual hand is implemented.
+        this.StateMachine.Input.PressedLeft += OnCardButtonPressed;
+        this.StateMachine.Input.PressedCancel += OnColorSelected;
     }
 
     public override void Exit()
@@ -31,9 +36,13 @@ public class PlayerTurnCardGameState : CardGameState
         this._playerTurnTextUI.gameObject.SetActive(false);
         PlayerTurnEnded?.Invoke();
         
-        StateMachine.Input.PressedConfirm -= OnPressedConfirm;
+        this.StateMachine.Input.PressedConfirm -= OnPressedConfirm;
         
         Debug.Log("Player Turn: Exiting...");
+        
+        // Temporary for demo purposes until an actual hand is implemented.
+        this.StateMachine.Input.PressedLeft -= OnCardButtonPressed;
+        this.StateMachine.Input.PressedCancel -= OnColorSelected;
     }
 
     private void OnPressedConfirm()
@@ -47,7 +56,16 @@ public class PlayerTurnCardGameState : CardGameState
         this._playerHandUI.text = $"Player Hand: {--this._playerCardCount}";
         if (this._playerCardCount == 0)
         {
-            //this.StateMachine.ChangeState<WinState>();
+            this.StateMachine.ChangeState<WinCardGameState>();
+        }
+    }
+
+    public void OnColorSelected()
+    {
+        this._playerHandUI.text = $"Player Hand: {--this._playerCardCount}";
+        if (this._playerCardCount == 0)
+        {
+            this.StateMachine.ChangeState<WinCardGameState>();
         }
     }
 }

@@ -9,38 +9,33 @@ public class CardGameUIController : MonoBehaviour
 
     [SerializeField] private RectTransform _playerUI = null;
     [SerializeField] private Text _playerTurnTextUI = null;
+    [SerializeField] private Text _playerHandSizeUI = null;
+    [SerializeField] private Text _enemyHandSizeUI = null;
+    [SerializeField] private RectTransform _gameOverUI = null;
 
     private void OnEnable()
     {
         EnemyTurnCardGameState.EnemyTurnBegan += OnEnemyTurnBegan;
         EnemyTurnCardGameState.EnemyTurnEnded += OnEnemyTurnEnded;
-        PlayerTurnCardGameState.PlayerTurnBegan += OnPlayerTurnBegan;
-        PlayerTurnCardGameState.PlayerTurnEnded += OnPlayerTurnEnded;
+        SetupCardGameState.GameBegan += OnGameBegan;
+        SetupCardGameState.GameEnded += OnGameEnded;
+        GameOverCardGameState.OnGameOverEntered += OnGameOverEntered;
+        GameOverCardGameState.OnGameOverExited += OnGameOverExited;
     }
 
     private void OnDisable()
     {
         EnemyTurnCardGameState.EnemyTurnBegan -= OnEnemyTurnBegan;
         EnemyTurnCardGameState.EnemyTurnEnded -= OnEnemyTurnEnded;
-        PlayerTurnCardGameState.PlayerTurnBegan -= OnPlayerTurnBegan;
-        PlayerTurnCardGameState.PlayerTurnEnded -= OnPlayerTurnEnded;
+        SetupCardGameState.GameBegan -= OnGameBegan;
+        SetupCardGameState.GameEnded -= OnGameEnded;
+        GameOverCardGameState.OnGameOverEntered -= OnGameOverEntered;
+        GameOverCardGameState.OnGameOverExited -= OnGameOverExited;
     }
 
     private void Start()
     {
         this._enemyThinkingTextUI.gameObject.SetActive(false);
-        this._playerUI.gameObject.SetActive(false);
-        this._playerTurnTextUI.gameObject.SetActive(false);
-    }
-
-    void OnPlayerTurnBegan()
-    {
-        this._playerUI.gameObject.SetActive(true);
-        this._playerTurnTextUI.gameObject.SetActive(true);
-    }
-    
-    void OnPlayerTurnEnded()
-    {
         this._playerUI.gameObject.SetActive(false);
         this._playerTurnTextUI.gameObject.SetActive(false);
     }
@@ -53,5 +48,27 @@ public class CardGameUIController : MonoBehaviour
     void OnEnemyTurnEnded()
     {
         this._enemyThinkingTextUI.gameObject.SetActive(false);
+    }
+
+    void OnGameBegan()
+    {
+        this._playerHandSizeUI.gameObject.SetActive(true);
+        this._enemyHandSizeUI.gameObject.SetActive(true);
+    }
+
+    void OnGameEnded()
+    {
+        this._playerHandSizeUI.gameObject.SetActive(false);
+        this._enemyHandSizeUI.gameObject.SetActive(false);
+    }
+
+    void OnGameOverEntered()
+    {
+        this._gameOverUI.gameObject.SetActive(true);
+    }
+
+    void OnGameOverExited()
+    {
+        this._gameOverUI.gameObject.SetActive(false);
     }
 }

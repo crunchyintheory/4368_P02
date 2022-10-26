@@ -38,7 +38,7 @@ public class EnemyTurnCardGameState : CardGameState
         this._enemyHandUI.text = $"Enemy Hand: {--this._enemyCardCount}";
         if (this._enemyCardCount == 0)
         {
-            //this.StateMachine.ChangeState<LoseState>();
+            this.StateMachine.ChangeState<LoseCardGameState>();
         }
         else
         {

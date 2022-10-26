@@ -10,6 +10,6 @@ public class CardGameSM : StateMachine
     // Start is called before the first frame update
     void Start()
     {
-        ChangeState<SetupCardGameState>();
+        ChangeState<MainMenuCardGameState>();
     }
 }
