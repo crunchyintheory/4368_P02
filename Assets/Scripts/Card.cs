@@ -4,16 +4,27 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
+[Serializable]
 public struct CardData
 {
     public Card.UnoColor Color;
     public Card.UnoFlag Flag;
     public char Value;
     public int DrawAmount;
+
+    public bool IsWild;
 }
 
 public class Card : MonoBehaviour
 {
+    public static readonly UnoColor[] Colors = new[]
+    {
+        UnoColor.Red,
+        UnoColor.Green,
+        UnoColor.Blue,
+        UnoColor.Yellow
+    };
+    
     public static readonly Dictionary<UnoColor, Color> ColorTable = new ()
     {
         { UnoColor.Red, new Color(1f, 0f, 0) },

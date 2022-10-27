@@ -40,12 +40,12 @@ PrefabInstance:
     - target: {fileID: 4737976568257047018, guid: 4190cabcd7c08f94788a7381962e1105,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.99264586
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4737976568257047018, guid: 4190cabcd7c08f94788a7381962e1105,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.1210551
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4737976568257047018, guid: 4190cabcd7c08f94788a7381962e1105,
         type: 3}
@@ -60,7 +60,7 @@ PrefabInstance:
     - target: {fileID: 4737976568257047018, guid: 4190cabcd7c08f94788a7381962e1105,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 13.906
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4737976568257047018, guid: 4190cabcd7c08f94788a7381962e1105,
         type: 3}
@@ -135,8 +135,9 @@ MonoBehaviour:
   - {fileID: 4338600811837168667}
   - {fileID: 4293688950165243567}
   _meshRenderer: {fileID: 7052462625164267992}
-  Flag: 0
+  _flag: 0
   DrawAmount: 0
+  _value: 0
 --- !u!114 &2174845325328673338 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4737976568258713525, guid: 4190cabcd7c08f94788a7381962e1105,
