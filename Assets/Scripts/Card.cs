@@ -15,6 +15,7 @@ public struct CardData
     public bool IsWild;
 }
 
+[SelectionBase]
 public class Card : MonoBehaviour
 {
     public static readonly UnoColor[] Colors = new[]
@@ -126,5 +127,23 @@ public class Card : MonoBehaviour
 
         else
             return card.FlagIs(this._flag);
+    }
+
+    public Coroutine AnimateTo(Vector3 positionWS, Quaternion rotationWS, float time = 1.0f)
+    {
+        return StartCoroutine(AnimateToCoroutine(positionWS, rotationWS, time));
+    }
+
+    private IEnumerator AnimateToCoroutine(Vector3 positionWS, Quaternion rotationWS, float time)
+    {
+        Vector3 originalPosition = this.transform.position;
+        Quaternion originalRotation = this.transform.rotation;
+
+        for(float t = 0; t < time; t += Time.deltaTime)
+        {
+            this.transform.SetPositionAndRotation(Vector3.Slerp(originalPosition, positionWS, t), Quaternion.Slerp(originalRotation, rotationWS, t));
+
+            yield return new WaitForEndOfFrame();
+        }
     }
 }

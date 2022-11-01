@@ -1164,6 +1164,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _input: {fileID: 7762943691953350311}
+  Deck: {fileID: 0}
+  PlayerHand: {fileID: 0}
+  EnemyHand: {fileID: 0}
 --- !u!114 &7762943691932586564
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1176,6 +1179,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f45f00120284ca648b124663aa2c1bcc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _deckPrefab: {fileID: 7846186168676134989, guid: 950c1e38d45bd344db4f46b19732d125,
+    type: 3}
+  _handPrefab: {fileID: 8803852324699647074, guid: 9d18f97db2a4ddc4590f074a605fdf12,
+    type: 3}
   _startingCardNumber: 104
   _startingHandSize: 7
   _numPlayers: 2

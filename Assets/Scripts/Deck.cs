@@ -13,15 +13,14 @@ public struct DeckPreset
     [SerializeField] public CardData Card;
 }
 
+[SelectionBase]
 public class Deck : MonoBehaviour
 {
     [SerializeField] private Card _template;
     [SerializeField] private WildCard _wildTemplate;
     [SerializeField] private DeckPreset[] _initialCards;
-
-    [DoNotSerialize, HideInInspector] public CardData[] Cards;
     
-    private Queue<Card> CardInstances;
+    public Queue<Card> CardInstances;
 
     [SerializeField] private int _numInstances = 0;
 
