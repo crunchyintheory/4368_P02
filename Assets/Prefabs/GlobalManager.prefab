@@ -1186,6 +1186,11 @@ MonoBehaviour:
   _startingCardNumber: 104
   _startingHandSize: 7
   _numPlayers: 2
+  _deckPosition: {x: 0.1, y: -0.1586, z: 0.6}
+  _playerHandPosition: {x: 0, y: -0.0413, z: 0.4004}
+  _playerHandRotation: {x: 68.379, y: 0, z: 0}
+  _enemyHandPosition: {x: 0, y: -0.1617, z: 0.7678}
+  _enemyHandRotation: {x: -90, y: 0, z: 0}
 --- !u!114 &7762943691932586563
 MonoBehaviour:
   m_ObjectHideFlags: 0

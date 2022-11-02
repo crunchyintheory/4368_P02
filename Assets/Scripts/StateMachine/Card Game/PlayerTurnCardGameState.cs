@@ -19,6 +19,8 @@ public class PlayerTurnCardGameState : CardGameState
     public override void Enter()
     {
         Debug.Log("Player Turn: ...Entering");
+        if (this.StateMachine.Deck)
+            this.StateMachine.Deck.CanPlayerDraw = true;
         PlayerTurnBegan?.Invoke();
         
         this._playerTurnCount++;
@@ -34,6 +36,7 @@ public class PlayerTurnCardGameState : CardGameState
     public override void Exit()
     {
         this._playerTurnTextUI.gameObject.SetActive(false);
+        this.StateMachine.Deck.CanPlayerDraw = false;
         PlayerTurnEnded?.Invoke();
         
         this.StateMachine.Input.PressedConfirm -= OnPressedConfirm;

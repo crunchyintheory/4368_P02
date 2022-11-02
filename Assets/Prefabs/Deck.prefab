@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7846186168676134988}
   - component: {fileID: 7846186168676134989}
+  - component: {fileID: 1128949342129119987}
   m_Layer: 0
   m_Name: Deck
   m_TagString: Untagged
@@ -169,4 +170,19 @@ MonoBehaviour:
       Value: 48
       DrawAmount: 4
       IsWild: 1
-  Cards: []
+  _numInstances: 0
+  CanPlayerDraw: 0
+  PlayerHand: {fileID: 0}
+--- !u!65 &1128949342129119987
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7846186168676134990}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.065, y: 0.025, z: 0.09}
+  m_Center: {x: 0, y: -0.0114, z: 0}

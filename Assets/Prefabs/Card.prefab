@@ -280,6 +280,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4737976568257047018}
   - component: {fileID: 870713871928014968}
+  - component: {fileID: 5128593098550528239}
   m_Layer: 0
   m_Name: Card
   m_TagString: Untagged
@@ -325,6 +326,19 @@ MonoBehaviour:
   _flag: 0
   DrawAmount: 0
   _value: 0
+--- !u!65 &5128593098550528239
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4737976568257047019}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.0643, y: 0.0895, z: 0.0003}
+  m_Center: {x: 0, y: 0, z: 0.000125}
 --- !u!1 &4737976568258713523
 GameObject:
   m_ObjectHideFlags: 0

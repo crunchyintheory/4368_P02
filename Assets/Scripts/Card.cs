@@ -59,6 +59,19 @@ public class Card : MonoBehaviour
     [SerializeField] public int DrawAmount = 0;
     [SerializeField] private char _value;
 
+    public bool ShouldRegisterMouseEvents = false;
+    public float RegisterMouseEventsAfter = 0;
+
+    private Vector3 _positionInHand;
+    private Quaternion _rotationInHand;
+
+    public Vector3 OriginalPosition;
+    public Quaternion OriginalRotation;
+    private Vector3 _targetPosition;
+    private Quaternion _targetRotation;
+    private float _targetEndTime = -1;
+    private float _targetStartTime;
+
     public virtual char Value => this._value;
     public virtual UnoFlag Flag => this._flag;
 
@@ -96,11 +109,6 @@ public class Card : MonoBehaviour
             text.text = val;
         }
     }
-    
-    protected virtual void Start()
-    {
-        Render();
-    }
 
     public virtual bool ColorIs(UnoColor color)
     {
@@ -129,21 +137,56 @@ public class Card : MonoBehaviour
             return card.FlagIs(this._flag);
     }
 
-    public Coroutine AnimateTo(Vector3 positionWS, Quaternion rotationWS, float time = 1.0f)
+    public void SetHandPosition(Vector3 positionWS, Quaternion rotationWS, float time = 1.0f)
     {
-        return StartCoroutine(AnimateToCoroutine(positionWS, rotationWS, time));
+        this._positionInHand = positionWS;
+        this._rotationInHand = rotationWS;
+        AnimateTo(positionWS, rotationWS, time, false);
     }
 
-    private IEnumerator AnimateToCoroutine(Vector3 positionWS, Quaternion rotationWS, float time)
+    public void AnimateTo(Vector3 positionWS, Quaternion rotationWS, float time = 1.0f, bool autoCompleteCurrentAnimation = true)
     {
-        Vector3 originalPosition = this.transform.position;
-        Quaternion originalRotation = this.transform.rotation;
-
-        for(float t = 0; t < time; t += Time.deltaTime)
+        if (autoCompleteCurrentAnimation)
         {
-            this.transform.SetPositionAndRotation(Vector3.Slerp(originalPosition, positionWS, t), Quaternion.Slerp(originalRotation, rotationWS, t));
-
-            yield return new WaitForEndOfFrame();
+            this.OriginalPosition = this._targetPosition;
+            this.OriginalRotation = this._targetRotation;
         }
+        else
+        {
+            this.OriginalPosition = this.transform.position;
+            this.OriginalRotation = this.transform.rotation;
+        }
+
+        
+        this._targetPosition = positionWS;
+        this._targetRotation = rotationWS;
+        this._targetStartTime = Time.time;
+        this._targetEndTime = Time.time + time;
+    }
+
+    protected virtual void Start()
+    {
+        Render();
+    }
+
+    private void Update()
+    {
+        float t = (Time.time - this._targetStartTime) / (this._targetEndTime - this._targetStartTime);
+        
+        if (t >= 0)
+            this.transform.SetPositionAndRotation(Vector3.Slerp(this.OriginalPosition, this._targetPosition, t), Quaternion.Slerp(this.OriginalRotation, this._targetRotation, t));
+    }
+
+    private void OnMouseEnter()
+    {
+        if (!this.ShouldRegisterMouseEvents || this.RegisterMouseEventsAfter > Time.time) return;
+        Vector3 pos = this._positionInHand + this.transform.up * 0.02f;
+        AnimateTo(pos, this._rotationInHand, 0.1f, true);
+    }
+
+    private void OnMouseExit()
+    {
+        if (!this.ShouldRegisterMouseEvents || this.RegisterMouseEventsAfter > Time.time) return;
+        AnimateTo(this._positionInHand, this._rotationInHand, 0.1f, false);
     }
 }

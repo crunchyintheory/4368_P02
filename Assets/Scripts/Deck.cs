@@ -24,9 +24,15 @@ public class Deck : MonoBehaviour
 
     [SerializeField] private int _numInstances = 0;
 
-    private void Start()
+    public bool CanPlayerDraw = false;
+    [HideInInspector] public Hand PlayerHand;
+
+    public void RemoveChildren()
     {
-        this.CardInstances = new Queue<Card>();
+        for (int i = 0; i < this.transform.childCount; i++)
+        {
+            DestroyImmediate(this.transform.GetChild(i).gameObject);
+        }
     }
 
     public void ResetDeck()
@@ -34,6 +40,10 @@ public class Deck : MonoBehaviour
         if (this.CardInstances == null)
         {
             this.CardInstances = new Queue<Card>();
+            for (int i = 0; i < this.transform.childCount; i++)
+            {
+                DestroyImmediate(this.transform.GetChild(i).gameObject);
+            }
         }
         else
         {
@@ -41,7 +51,11 @@ public class Deck : MonoBehaviour
             {
                 if (card == null)
                     continue;
-                Destroy(card.gameObject);
+                
+                if (Application.isEditor)
+                    DestroyImmediate(card.gameObject);
+                else
+                    Destroy(card.gameObject);
             }
             this.CardInstances.Clear();
         }
@@ -73,14 +87,26 @@ public class Deck : MonoBehaviour
         foreach ((_, CardData data) in _shuffled)
         {
             Card template = data.IsWild ? this._wildTemplate : this._template;
+
+            Vector3 position = this.transform.position + new Vector3(0, heightOffset, 0);
+            Quaternion rotation = Quaternion.Euler(-90, 0, 0);
             
-            Card card = Instantiate(template, this.transform.position + new Vector3(0, heightOffset, 0), Quaternion.Euler(-90, 0, 0), this.transform);
+            Card card = Instantiate(template, position, rotation, this.transform);
             this.CardInstances.Enqueue(card);
             card.Import(data);
             card.Render();
+            card.OriginalPosition = position;
+            card.OriginalRotation = rotation;
 
             this._numInstances++;
-            heightOffset += 0.0002f;
+            heightOffset -= 0.0002f;
         }
+    }
+
+    private void OnMouseUp()
+    {
+        if (!this.CanPlayerDraw) return;
+        this.PlayerHand.Draw(this, 1, 0.5f);
+        this.CanPlayerDraw = false;
     }
 }
