@@ -10,7 +10,7 @@ public class WildCard : Card
     public override void Render()
     {
         foreach (TextMeshProUGUI text in this._texts)
-            text.text = this.Flag == UnoFlag.Draw ? $"+{this.DrawAmount}" : "";
+            text.text = this._flag == UnoFlag.Draw ? $"+{this.DrawAmount}" : "";
 
         if (this._colorChosen)
             this._meshRenderer.material.color = ColorTable[this.Color];

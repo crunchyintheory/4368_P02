@@ -55,9 +55,9 @@ public class Card : MonoBehaviour
     [SerializeField] protected TextMeshProUGUI[] _texts;
     [SerializeField] protected MeshRenderer _meshRenderer;
 
-    [SerializeField] private UnoFlag _flag = UnoFlag.None;
+    [SerializeField] protected UnoFlag _flag = UnoFlag.None;
     [SerializeField] public int DrawAmount = 0;
-    [SerializeField] private char _value;
+    [SerializeField] protected char _value;
 
     public bool ShouldRegisterMouseEvents = false;
     public float RegisterMouseEventsAfter = 0;
@@ -72,8 +72,8 @@ public class Card : MonoBehaviour
     private float _targetEndTime = -1;
     private float _targetStartTime;
 
-    public virtual char Value => this._value;
-    public virtual UnoFlag Flag => this._flag;
+    public delegate void OnPlayedEventHandler(Card sender);
+    public event OnPlayedEventHandler OnPlayed;
 
     public virtual void Import(CardData card)
     {
@@ -89,7 +89,7 @@ public class Card : MonoBehaviour
         this._meshRenderer.material.color = ColorTable[this.Color];
         this._texts[0].color = ColorTable[this.Color];
         string val = "";
-        switch (this.Flag)
+        switch (this._flag)
         {
             case UnoFlag.Draw:
                 val = $"+{this.DrawAmount}";
@@ -122,7 +122,7 @@ public class Card : MonoBehaviour
 
     public virtual bool ValueIs(char value)
     {
-        return this._value == value;
+        return this._value.Equals(value);
     }
 
     public virtual bool CanBePlayedOn(Card card)
@@ -130,7 +130,7 @@ public class Card : MonoBehaviour
         if (card.ColorIs(this.Color))
             return true;
         
-        else if (this.Flag == UnoFlag.None || card.FlagIs(UnoFlag.None))
+        else if (this._flag == UnoFlag.None || card.FlagIs(UnoFlag.None))
             return card.ValueIs(this._value);
 
         else
@@ -188,5 +188,15 @@ public class Card : MonoBehaviour
     {
         if (!this.ShouldRegisterMouseEvents || this.RegisterMouseEventsAfter > Time.time) return;
         AnimateTo(this._positionInHand, this._rotationInHand, 0.1f, false);
+    }
+
+    private void OnMouseUp()
+    {
+        if (!this.ShouldRegisterMouseEvents || this.RegisterMouseEventsAfter > Time.time) return;
+        if (CanBePlayedOn(DiscardPile.Stack.Peek()))
+        {
+            this.OnPlayed?.Invoke(this);
+            DiscardPile.Instance.Discard(this);
+        }
     }
 }

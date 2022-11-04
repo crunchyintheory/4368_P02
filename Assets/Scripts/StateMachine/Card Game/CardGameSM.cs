@@ -10,6 +10,7 @@ public class CardGameSM : StateMachine
     public Deck Deck;
     public Hand PlayerHand;
     public Hand EnemyHand;
+    public DiscardPile Discard;
     
     // Start is called before the first frame update
     void Start()

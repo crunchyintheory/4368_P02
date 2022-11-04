@@ -18,7 +18,7 @@ public class EnemyTurnCardGameState : CardGameState
     {
         Debug.Log("Enemy Turn: ...Enter");
         EnemyTurnBegan?.Invoke();
-        this._enemyHandUI.text = $"Player Hand: {this._enemyCardCount}";
+        this._enemyHandUI.text = $"Enemy Hand: {this._enemyCardCount}";
 
         StartCoroutine(EnemyThinkingRoutine(this._pauseDuration));
     }

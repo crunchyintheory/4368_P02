@@ -1167,6 +1167,7 @@ MonoBehaviour:
   Deck: {fileID: 0}
   PlayerHand: {fileID: 0}
   EnemyHand: {fileID: 0}
+  Discard: {fileID: 0}
 --- !u!114 &7762943691932586564
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1183,6 +1184,8 @@ MonoBehaviour:
     type: 3}
   _handPrefab: {fileID: 8803852324699647074, guid: 9d18f97db2a4ddc4590f074a605fdf12,
     type: 3}
+  _discardPrefab: {fileID: 1937156348195789998, guid: 3c3a7c7f9bb7ac640b9f2fd50988eecc,
+    type: 3}
   _startingCardNumber: 104
   _startingHandSize: 7
   _numPlayers: 2
@@ -1191,6 +1194,7 @@ MonoBehaviour:
   _playerHandRotation: {x: 68.379, y: 0, z: 0}
   _enemyHandPosition: {x: 0, y: -0.1617, z: 0.7678}
   _enemyHandRotation: {x: -90, y: 0, z: 0}
+  _discardPosition: {x: -0.01, y: -0.1586, z: 0.6}
 --- !u!114 &7762943691932586563
 MonoBehaviour:
   m_ObjectHideFlags: 0
