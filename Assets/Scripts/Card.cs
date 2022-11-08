@@ -72,6 +72,8 @@ public class Card : MonoBehaviour
     private float _targetEndTime = -1;
     private float _targetStartTime;
 
+    private Deck deck;
+
     public delegate void OnPlayedEventHandler(Card sender);
     public event OnPlayedEventHandler OnPlayed;
 
@@ -164,6 +166,12 @@ public class Card : MonoBehaviour
         this._targetEndTime = Time.time + time;
     }
 
+    public void Play()
+    {
+        this.OnPlayed?.Invoke(this);
+        DiscardPile.Instance.Discard(this);
+    }
+
     protected virtual void Start()
     {
         Render();
@@ -190,13 +198,14 @@ public class Card : MonoBehaviour
         AnimateTo(this._positionInHand, this._rotationInHand, 0.1f, false);
     }
 
-    private void OnMouseUp()
+    private void OnMouseUpAsButton()
     {
-        if (!this.ShouldRegisterMouseEvents || this.RegisterMouseEventsAfter > Time.time) return;
+        if (!this.ShouldRegisterMouseEvents || this.RegisterMouseEventsAfter > Time.time || !PlayerTurnCardGameState.CanPlayerPlay) return;
         if (CanBePlayedOn(DiscardPile.Stack.Peek()))
         {
-            this.OnPlayed?.Invoke(this);
-            DiscardPile.Instance.Discard(this);
+            Play();
+            PlayerTurnCardGameState.CanPlayerPlay = false;
+            PlayerTurnCardGameState.Instance.OnCardPlayed();
         }
     }
 }

@@ -7,7 +7,7 @@ public class CardGameState : State
 {
     protected CardGameSM StateMachine { get; private set; }
 
-    void Awake()
+    protected virtual void Awake()
     {
         this.StateMachine = GetComponent<CardGameSM>();
     }

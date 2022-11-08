@@ -24,8 +24,6 @@ public class SetupCardGameState : CardGameState
     [SerializeField] private Vector3 _enemyHandRotation = new Vector3(-90f, 0, 0);
     [SerializeField] private Vector3 _discardPosition = new Vector3(-0.01f, -0.1586f, 0.6f);
 
-    private bool _activated;
-
     public override void Enter()
     {
         StartCoroutine(LoadGameSceneCoroutine());
@@ -35,8 +33,6 @@ public class SetupCardGameState : CardGameState
         Debug.Log($"Creating deck with {this._startingCardNumber} cards");
 
         GameBegan?.Invoke();
-
-        this._activated = false;
     }
 
     private IEnumerator LoadGameSceneCoroutine()
@@ -52,27 +48,19 @@ public class SetupCardGameState : CardGameState
         this.StateMachine.PlayerHand.isPlayerHand = true;
         this.StateMachine.Deck.PlayerHand = this.StateMachine.PlayerHand;
         this.StateMachine.Deck.CanPlayerDraw = true;
-        this.StateMachine.PlayerHand.Draw(this.StateMachine.Deck, 4, 1f);
+        this.StateMachine.PlayerHand.Draw(this.StateMachine.Deck, this._startingHandSize, 1f);
         
         this.StateMachine.EnemyHand = Instantiate(this._handPrefab, this._enemyHandPosition, Quaternion.Euler(this._enemyHandRotation));
-        this.StateMachine.EnemyHand.Draw(this.StateMachine.Deck, 4, 1f);
+        this.StateMachine.EnemyHand.Draw(this.StateMachine.Deck, this._startingHandSize, 1f);
 
         this.StateMachine.Discard = Instantiate(this._discardPrefab, this._discardPosition, Quaternion.identity);
         this.StateMachine.Discard.Discard(this.StateMachine.Deck.CardInstances.Dequeue());
-    }
-
-    public override void Tick()
-    {
-        if (this._activated == false)
-        {
-            this._activated = true;
-            this.StateMachine.ChangeState<PlayerTurnCardGameState>();
-        }
+        
+        this.StateMachine.ChangeState<PlayerTurnCardGameState>();
     }
 
     public override void Exit()
     {
-        this._activated = false;
         Debug.Log("Setup: Exiting...");
     }
 }

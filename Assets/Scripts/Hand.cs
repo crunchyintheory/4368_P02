@@ -13,6 +13,8 @@ public class Hand : MonoBehaviour
     [SerializeField] private float _angleDeltaMin = 3f;
     [SerializeField] private int _angleDeltaScaleThreshold = 8;
 
+    public int Size => this.Cards.Count;
+
     public void Draw(Deck deck, int count, float time)
     {
         for (int i = 0; i < count; i++)

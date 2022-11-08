@@ -16,25 +16,45 @@ public class PlayerTurnCardGameState : CardGameState
 
     private int _playerCardCount = 7;
 
+    public static bool CanPlayerPlay = false;
+
+    public static PlayerTurnCardGameState Instance;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        if (Instance != null)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+
+        Instance = this;
+    }
+
     public override void Enter()
     {
         Debug.Log("Player Turn: ...Entering");
         if (this.StateMachine.Deck)
             this.StateMachine.Deck.CanPlayerDraw = true;
         PlayerTurnBegan?.Invoke();
+        CanPlayerPlay = true;
         
         this._playerTurnCount++;
         this._playerTurnTextUI.text = $"Player Turn: {this._playerTurnCount}";
-        this._playerHandUI.text = $"Player Hand: {this._playerCardCount}";
+        
+        //Solve race condition
+        if(this.StateMachine.PlayerHand) this._playerHandUI.text = $"Player Hand: {this.StateMachine.PlayerHand.Size}";
         this.StateMachine.Input.PressedConfirm += OnPressedConfirm;
 
         // Temporary for demo purposes until an actual hand is implemented.
-        this.StateMachine.Input.PressedLeft += OnCardButtonPressed;
-        this.StateMachine.Input.PressedCancel += OnColorSelected;
+        //this.StateMachine.Input.PressedLeft += OnCardButtonPressed;
+        //this.StateMachine.Input.PressedCancel += OnColorSelected;
     }
 
     public override void Exit()
     {
+        CanPlayerPlay = false;
         this._playerTurnTextUI.gameObject.SetActive(false);
         this.StateMachine.Deck.CanPlayerDraw = false;
         PlayerTurnEnded?.Invoke();
@@ -54,9 +74,18 @@ public class PlayerTurnCardGameState : CardGameState
         this.StateMachine.ChangeState<EnemyTurnCardGameState>();
     }
 
+    public void OnCardPlayed()
+    {
+        this._playerHandUI.text = $"Player Hand: {this.StateMachine.PlayerHand.Size}";
+        if (this.StateMachine.PlayerHand.Size == 0)
+        {
+            this.StateMachine.ChangeState<WinCardGameState>();
+        }
+    }
+
     public void OnCardButtonPressed()
     {
-        this._playerHandUI.text = $"Player Hand: {--this._playerCardCount}";
+        this._playerHandUI.text = $"Player Hand: {this.StateMachine.PlayerHand.Size}";
         if (this._playerCardCount == 0)
         {
             this.StateMachine.ChangeState<WinCardGameState>();
@@ -65,7 +94,7 @@ public class PlayerTurnCardGameState : CardGameState
 
     public void OnColorSelected()
     {
-        this._playerHandUI.text = $"Player Hand: {--this._playerCardCount}";
+        this._playerHandUI.text = $"Player Hand: {this.StateMachine.PlayerHand.Size}";
         if (this._playerCardCount == 0)
         {
             this.StateMachine.ChangeState<WinCardGameState>();

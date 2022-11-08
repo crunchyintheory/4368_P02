@@ -18,7 +18,7 @@ public class EnemyTurnCardGameState : CardGameState
     {
         Debug.Log("Enemy Turn: ...Enter");
         EnemyTurnBegan?.Invoke();
-        this._enemyHandUI.text = $"Enemy Hand: {this._enemyCardCount}";
+        this._enemyHandUI.text = $"Enemy Hand: {this.StateMachine.EnemyHand.Size}";
 
         StartCoroutine(EnemyThinkingRoutine(this._pauseDuration));
     }
@@ -35,7 +35,8 @@ public class EnemyTurnCardGameState : CardGameState
         
         Debug.Log("Enemy performs action");
         
-        this._enemyHandUI.text = $"Enemy Hand: {--this._enemyCardCount}";
+        this.StateMachine.EnemyHand.Cards[0].Play();
+        this._enemyHandUI.text = $"Enemy Hand: {this.StateMachine.EnemyHand.Size}";
         if (this._enemyCardCount == 0)
         {
             this.StateMachine.ChangeState<LoseCardGameState>();
