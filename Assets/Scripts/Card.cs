@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using Unity.VisualScripting;
 
 [Serializable]
 public struct CardData
@@ -18,8 +19,7 @@ public struct CardData
 [SelectionBase]
 public class Card : MonoBehaviour
 {
-    public static readonly UnoColor[] Colors = new[]
-    {
+    public static readonly UnoColor[] Colors = {
         UnoColor.Red,
         UnoColor.Green,
         UnoColor.Blue,
@@ -77,6 +77,8 @@ public class Card : MonoBehaviour
     public delegate void OnPlayedEventHandler(Card sender);
     public event OnPlayedEventHandler OnPlayed;
 
+    public bool IsWild;
+
     public virtual void Import(CardData card)
     {
         this.Color = card.Color;
@@ -88,6 +90,7 @@ public class Card : MonoBehaviour
 
     public virtual void Render()
     {
+        this.IsWild = false;
         this._meshRenderer.material.color = ColorTable[this.Color];
         this._texts[0].color = ColorTable[this.Color];
         string val = "";
@@ -132,7 +135,7 @@ public class Card : MonoBehaviour
         if (card.ColorIs(this.Color))
             return true;
         
-        else if (this._flag == UnoFlag.None || card.FlagIs(UnoFlag.None))
+        else if (this._flag == UnoFlag.None && card.FlagIs(UnoFlag.None))
             return card.ValueIs(this._value);
 
         else
@@ -170,6 +173,17 @@ public class Card : MonoBehaviour
     {
         this.OnPlayed?.Invoke(this);
         DiscardPile.Instance.Discard(this);
+
+        switch (this._flag)
+        {
+            case UnoFlag.Draw:
+                CardGameSM.CurrentTurn.DrawEnemy(this.DrawAmount);
+                break;
+            case UnoFlag.Reverse:
+            case UnoFlag.Skip:
+                CardGameSM.CurrentTurn.SkipEnemyTurn();
+                break;
+        }
     }
 
     protected virtual void Start()
@@ -198,13 +212,14 @@ public class Card : MonoBehaviour
         AnimateTo(this._positionInHand, this._rotationInHand, 0.1f, false);
     }
 
-    private void OnMouseUpAsButton()
+    protected virtual void OnMouseUpAsButton()
     {
         if (!this.ShouldRegisterMouseEvents || this.RegisterMouseEventsAfter > Time.time || !PlayerTurnCardGameState.CanPlayerPlay) return;
         if (CanBePlayedOn(DiscardPile.Stack.Peek()))
         {
-            Play();
             PlayerTurnCardGameState.CanPlayerPlay = false;
+            PlayerTurnCardGameState.HasDrawn = true;
+            Play();
             PlayerTurnCardGameState.Instance.OnCardPlayed();
         }
     }

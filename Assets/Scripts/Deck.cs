@@ -24,7 +24,6 @@ public class Deck : MonoBehaviour
 
     [SerializeField] private int _numInstances = 0;
 
-    public bool CanPlayerDraw = false;
     [HideInInspector] public Hand PlayerHand;
 
     public void RemoveChildren()
@@ -105,8 +104,13 @@ public class Deck : MonoBehaviour
 
     private void OnMouseUp()
     {
-        if (!this.CanPlayerDraw) return;
-        this.PlayerHand.Draw(this, 1, 0.5f);
-        this.CanPlayerDraw = false;
+        if (!PlayerTurnCardGameState.CanPlayerDraw) return;
+        this.PlayerHand.Draw(this, 1);
+        PlayerTurnCardGameState.HasDrawn = true;
+        if (!this.PlayerHand.HasValidPlay())
+        {
+            PlayerTurnCardGameState.CanPlayerPlay = false;
+            (CardGameSM.CurrentTurn as PlayerTurnCardGameState)!.OnCardPlayed();
+        }
     }
 }

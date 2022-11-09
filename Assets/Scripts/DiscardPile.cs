@@ -8,6 +8,8 @@ public class DiscardPile : MonoBehaviour
 
     public static DiscardPile Instance;
     public static Stack<Card> Stack => Instance.Cards;
+    public static Card TopCard => Instance.Cards.Peek();
+    public static Card.UnoColor Color => TopCard.Color;
 
     private void Awake()
     {

@@ -8,7 +8,6 @@ public class PlayerTurnUIIdleState : PlayerTurnUIState
     {
         this.StateMachine.PlayerUI.gameObject.SetActive(false);
         this.StateMachine.PlayerTurnTextUI.gameObject.SetActive(false);
-        this.StateMachine.SelectColorUI.gameObject.SetActive(false);
     }
     
 }

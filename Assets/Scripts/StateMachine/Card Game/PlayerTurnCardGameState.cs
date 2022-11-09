@@ -5,7 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerTurnCardGameState : CardGameState
+public class PlayerTurnCardGameState : CardGameState, ICardGameTurnState
 {
     public static event Action PlayerTurnBegan;
     public static event Action PlayerTurnEnded;
@@ -16,7 +16,16 @@ public class PlayerTurnCardGameState : CardGameState
 
     private int _playerCardCount = 7;
 
+    public static bool DisableDrawing = false;
+    public static bool HasDrawn = false;
+
     public static bool CanPlayerPlay = false;
+
+    public static bool CanPlayerDraw
+    {
+        get => !DisableDrawing && !HasDrawn;
+        set => DisableDrawing = !value;
+    }
 
     public static PlayerTurnCardGameState Instance;
 
@@ -35,9 +44,10 @@ public class PlayerTurnCardGameState : CardGameState
     public override void Enter()
     {
         Debug.Log("Player Turn: ...Entering");
-        if (this.StateMachine.Deck)
-            this.StateMachine.Deck.CanPlayerDraw = true;
+        CardGameSM.CurrentTurn = this;
         PlayerTurnBegan?.Invoke();
+        HasDrawn = false;
+        CanPlayerDraw = true;
         CanPlayerPlay = true;
         
         this._playerTurnCount++;
@@ -45,7 +55,7 @@ public class PlayerTurnCardGameState : CardGameState
         
         //Solve race condition
         if(this.StateMachine.PlayerHand) this._playerHandUI.text = $"Player Hand: {this.StateMachine.PlayerHand.Size}";
-        this.StateMachine.Input.PressedConfirm += OnPressedConfirm;
+        //this.StateMachine.Input.PressedConfirm += OnPressedConfirm;
 
         // Temporary for demo purposes until an actual hand is implemented.
         //this.StateMachine.Input.PressedLeft += OnCardButtonPressed;
@@ -55,17 +65,17 @@ public class PlayerTurnCardGameState : CardGameState
     public override void Exit()
     {
         CanPlayerPlay = false;
+        CanPlayerDraw = false;
         this._playerTurnTextUI.gameObject.SetActive(false);
-        this.StateMachine.Deck.CanPlayerDraw = false;
         PlayerTurnEnded?.Invoke();
         
-        this.StateMachine.Input.PressedConfirm -= OnPressedConfirm;
+        //this.StateMachine.Input.PressedConfirm -= OnPressedConfirm;
         
         Debug.Log("Player Turn: Exiting...");
         
         // Temporary for demo purposes until an actual hand is implemented.
-        this.StateMachine.Input.PressedLeft -= OnCardButtonPressed;
-        this.StateMachine.Input.PressedCancel -= OnColorSelected;
+        //this.StateMachine.Input.PressedLeft -= OnCardButtonPressed;
+        //this.StateMachine.Input.PressedCancel -= OnColorSelected;
     }
 
     private void OnPressedConfirm()
@@ -80,7 +90,11 @@ public class PlayerTurnCardGameState : CardGameState
         if (this.StateMachine.PlayerHand.Size == 0)
         {
             this.StateMachine.ChangeState<WinCardGameState>();
+            return;
         }
+
+        if (!CanPlayerPlay)
+            this.StateMachine.ChangeState<EnemyTurnCardGameState>();
     }
 
     public void OnCardButtonPressed()
@@ -99,5 +113,16 @@ public class PlayerTurnCardGameState : CardGameState
         {
             this.StateMachine.ChangeState<WinCardGameState>();
         }
+    }
+
+    public void DrawEnemy(int count)
+    {
+        this.StateMachine.EnemyHand.Draw(this.StateMachine.Deck, count);
+    }
+
+    public void SkipEnemyTurn()
+    {
+        HasDrawn = false;
+        CanPlayerPlay = true;
     }
 }

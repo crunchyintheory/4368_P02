@@ -4,26 +4,34 @@ using UnityEngine;
 
 public class PlayerTurnUIPlayState : PlayerTurnUIState
 {
+    public static PlayerTurnUIPlayState Instance;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        if (Instance != null)
+        {
+            Debug.Log(Instance);
+            //Destroy(this.gameObject);
+            return;
+        }
+
+        Instance = this;
+    }
     
     public override void Enter()
     {
         this.StateMachine.PlayerUI.gameObject.SetActive(true);
         this.StateMachine.PlayerTurnTextUI.gameObject.SetActive(true);
-        
-        // Temporary for demo purposes until an actual hand is implemented.
-        this.StateMachine.Input.PressedRight += OnSelectColorButtonClicked;
     }
 
     public override void Exit()
     {
         this.StateMachine.PlayerUI.gameObject.SetActive(false);
         this.StateMachine.PlayerTurnTextUI.gameObject.SetActive(false);
-        
-        // Temporary for demo purposes until an actual hand is implemented.
-        this.StateMachine.Input.PressedRight -= OnSelectColorButtonClicked;
     }
 
-    public void OnSelectColorButtonClicked()
+    public void SelectColor()
     {
         this.StateMachine.ChangeState<PlayerTurnUISelectColorState>();
     }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
@@ -15,8 +16,15 @@ public class Hand : MonoBehaviour
 
     public int Size => this.Cards.Count;
 
-    public void Draw(Deck deck, int count, float time)
+    public bool HasValidPlay()
     {
+        Debug.Log(this.Cards.Any(x => x.CanBePlayedOn(DiscardPile.TopCard)));
+        return this.Cards.Any(x => x.CanBePlayedOn(DiscardPile.TopCard));
+    }
+
+    public Card[] Draw(Deck deck, int count, float time = 0.5f)
+    {
+        Card[] drawn = new Card[count];
         for (int i = 0; i < count; i++)
         {
             Card card = deck.CardInstances.Dequeue();
@@ -24,9 +32,11 @@ public class Hand : MonoBehaviour
             this.Cards.Add(card);
             card.RegisterMouseEventsAfter = Time.time + time;
             card.OnPlayed += OnPlay;
+            drawn[i] = card;
         }
         
         Rearrange(time);
+        return drawn;
     }
 
     private void Rearrange(float time = 1f)

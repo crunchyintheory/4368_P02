@@ -11,6 +11,8 @@ public class CardGameSM : StateMachine
     public Hand PlayerHand;
     public Hand EnemyHand;
     public DiscardPile Discard;
+
+    public static ICardGameTurnState CurrentTurn;
     
     // Start is called before the first frame update
     void Start()
