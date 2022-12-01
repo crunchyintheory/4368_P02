@@ -58,6 +58,10 @@ public class Card : MonoBehaviour
     [SerializeField] protected UnoFlag _flag = UnoFlag.None;
     [SerializeField] public int DrawAmount = 0;
     [SerializeField] protected char _value;
+    
+    [SerializeField] private MeshRenderer _glow;
+    [SerializeField] private float _glowIntensity = 1;
+    [SerializeField] private float _glowSwapDuration = 2;
 
     public bool ShouldRegisterMouseEvents = false;
     public float RegisterMouseEventsAfter = 0;
@@ -73,6 +77,10 @@ public class Card : MonoBehaviour
     private float _targetStartTime;
 
     private Deck deck;
+    
+    private float _currentIntensity = 0;
+    private Coroutine _glowCoroutine;
+    private bool _glowing = false;
 
     public delegate void OnPlayedEventHandler(Card sender);
     public event OnPlayedEventHandler OnPlayed;
@@ -222,5 +230,48 @@ public class Card : MonoBehaviour
             Play();
             PlayerTurnCardGameState.Instance.OnCardPlayed();
         }
+    }
+
+    private void OnEnable()
+    {
+        PlayerTurnCardGameState.PlayerTurnBegan += RenderGlow;
+        PlayerTurnCardGameState.PlayerTurnEnded += RenderGlow;
+        Deck.PlayerDrewCard += RenderGlow;
+    }
+
+    private void OnDisable()
+    {
+        PlayerTurnCardGameState.PlayerTurnBegan -= RenderGlow;
+        PlayerTurnCardGameState.PlayerTurnEnded -= RenderGlow;
+        Deck.PlayerDrewCard -= RenderGlow;
+    }
+
+    private void RenderGlow()
+    {
+        if(this._glowCoroutine != null)
+            StopCoroutine(this._glowCoroutine);
+
+        bool shouldGlow = this.ShouldRegisterMouseEvents && PlayerTurnCardGameState.CanPlayerPlay && CanBePlayedOn(DiscardPile.Stack.Peek());
+        if (this._glowing == shouldGlow) return;
+
+        this._glowing = shouldGlow;
+        
+        this._glowCoroutine = StartCoroutine(RenderGlowCoroutine(shouldGlow));
+    }
+
+    private IEnumerator RenderGlowCoroutine(bool glow)
+    {
+        float intensity = glow ? this._glowIntensity : 0;
+        float startIntensity = glow ? 0 : this._glowIntensity;
+
+        for (float i = 0; i < this._glowSwapDuration; i += Time.fixedDeltaTime)
+        {
+            this._currentIntensity = Mathf.Lerp(startIntensity, intensity, i / this._glowSwapDuration);
+            this._glow.material.SetFloat("_Intensity", this._currentIntensity);
+            yield return new WaitForFixedUpdate();
+        }
+        
+        this._currentIntensity = Mathf.Lerp(startIntensity, intensity, 1);
+        this._glow.material.SetFloat("_Intensity", this._currentIntensity);
     }
 }

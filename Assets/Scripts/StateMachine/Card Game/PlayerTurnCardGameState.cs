@@ -27,6 +27,8 @@ public class PlayerTurnCardGameState : CardGameState, ICardGameTurnState
         set => DisableDrawing = !value;
     }
 
+    public static Deck Deck => Instance.StateMachine.Deck;
+
     public static PlayerTurnCardGameState Instance;
 
     protected override void Awake()
@@ -45,10 +47,10 @@ public class PlayerTurnCardGameState : CardGameState, ICardGameTurnState
     {
         Debug.Log("Player Turn: ...Entering");
         CardGameSM.CurrentTurn = this;
-        PlayerTurnBegan?.Invoke();
         HasDrawn = false;
         CanPlayerDraw = true;
         CanPlayerPlay = true;
+        PlayerTurnBegan?.Invoke();
         
         this._playerTurnCount++;
         this._playerTurnTextUI.text = $"Player Turn: {this._playerTurnCount}";

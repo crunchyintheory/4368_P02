@@ -25,6 +25,8 @@ public class Deck : MonoBehaviour
     [SerializeField] private int _numInstances = 0;
 
     [HideInInspector] public Hand PlayerHand;
+    
+    public static event Action PlayerDrewCard;
 
     public void RemoveChildren()
     {
@@ -83,6 +85,7 @@ public class Deck : MonoBehaviour
 
         _shuffled.Sort((x, y) => x.Key.CompareTo(y.Key));
 
+        int number = 1;
         foreach ((_, CardData data) in _shuffled)
         {
             Card template = data.IsWild ? this._wildTemplate : this._template;
@@ -91,6 +94,7 @@ public class Deck : MonoBehaviour
             Quaternion rotation = Quaternion.Euler(-90, 0, 0);
             
             Card card = Instantiate(template, position, rotation, this.transform);
+            card.name = $"{template.name} {number++}";
             this.CardInstances.Enqueue(card);
             card.Import(data);
             card.Render();
@@ -112,5 +116,6 @@ public class Deck : MonoBehaviour
             PlayerTurnCardGameState.CanPlayerPlay = false;
             (CardGameSM.CurrentTurn as PlayerTurnCardGameState)!.OnCardPlayed();
         }
+        PlayerDrewCard?.Invoke();
     }
 }

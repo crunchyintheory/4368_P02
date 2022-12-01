@@ -138,6 +138,14 @@ MonoBehaviour:
   _flag: 0
   DrawAmount: 0
   _value: 0
+  _glow: {fileID: 7819152254005743037}
+  _glowIntensity: 2
+  _glowSwapDuration: 0.5
+  ShouldRegisterMouseEvents: 0
+  RegisterMouseEventsAfter: 0
+  OriginalPosition: {x: 0, y: 0, z: 0}
+  OriginalRotation: {x: 0, y: 0, z: 0, w: 0}
+  IsWild: 0
 --- !u!114 &2174845325328673338 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4737976568258713525, guid: 4190cabcd7c08f94788a7381962e1105,
@@ -177,6 +185,12 @@ MonoBehaviour:
 --- !u!23 &7052462625164267992 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 4481459580654562391, guid: 4190cabcd7c08f94788a7381962e1105,
+    type: 3}
+  m_PrefabInstance: {fileID: 6912522792026848655}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &7819152254005743037 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 3705621739791200306, guid: 4190cabcd7c08f94788a7381962e1105,
     type: 3}
   m_PrefabInstance: {fileID: 6912522792026848655}
   m_PrefabAsset: {fileID: 0}
