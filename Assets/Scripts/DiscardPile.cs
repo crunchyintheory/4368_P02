@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +11,8 @@ public class DiscardPile : MonoBehaviour
     public static Stack<Card> Stack => Instance.Cards;
     public static Card TopCard => Instance.Cards.Peek();
     public static Card.UnoColor Color => TopCard.Color;
+
+    public static event Action OnChange;
 
     private void Awake()
     {
@@ -33,6 +36,7 @@ public class DiscardPile : MonoBehaviour
         AnimateCard(card, this.Cards.Count - 1);
         card.transform.SetParent(this.transform, true);
         card.ShouldRegisterMouseEvents = false;
+        OnChange?.Invoke();
     }
 
     public void AnimateCard(Card card, int index)

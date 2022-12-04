@@ -180,7 +180,6 @@ public class Card : MonoBehaviour
     public void Play()
     {
         this.OnPlayed?.Invoke(this);
-        DiscardPile.Instance.Discard(this);
 
         switch (this._flag)
         {
@@ -192,6 +191,8 @@ public class Card : MonoBehaviour
                 CardGameSM.CurrentTurn.SkipEnemyTurn();
                 break;
         }
+        
+        DiscardPile.Instance.Discard(this);
     }
 
     protected virtual void Start()
@@ -237,6 +238,7 @@ public class Card : MonoBehaviour
         PlayerTurnCardGameState.PlayerTurnBegan += RenderGlow;
         PlayerTurnCardGameState.PlayerTurnEnded += RenderGlow;
         Deck.PlayerDrewCard += RenderGlow;
+        DiscardPile.OnChange += RenderGlow;
     }
 
     private void OnDisable()
@@ -244,6 +246,7 @@ public class Card : MonoBehaviour
         PlayerTurnCardGameState.PlayerTurnBegan -= RenderGlow;
         PlayerTurnCardGameState.PlayerTurnEnded -= RenderGlow;
         Deck.PlayerDrewCard -= RenderGlow;
+        DiscardPile.OnChange -= RenderGlow;
     }
 
     private void RenderGlow()
