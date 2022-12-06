@@ -53,10 +53,10 @@ public class SetupCardGameState : CardGameState
         this.StateMachine.EnemyHand.Draw(this.StateMachine.Deck, this._startingHandSize, 1f);
 
         this.StateMachine.Discard = Instantiate(this._discardPrefab, this._discardPosition, Quaternion.identity);
-        this.StateMachine.Discard.Discard(this.StateMachine.Deck.CardInstances.Dequeue());
+        this.StateMachine.Discard.Discard(this.StateMachine.Deck.Draw());
         while (DiscardPile.TopCard.IsWild)
         {
-            this.StateMachine.Discard.Discard(this.StateMachine.Deck.CardInstances.Dequeue());
+            this.StateMachine.Discard.Discard(this.StateMachine.Deck.Draw());
         }
             
         

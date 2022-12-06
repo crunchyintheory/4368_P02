@@ -239,6 +239,7 @@ public class Card : MonoBehaviour
         PlayerTurnCardGameState.PlayerTurnEnded += RenderGlow;
         Deck.PlayerDrewCard += RenderGlow;
         DiscardPile.OnChange += RenderGlow;
+        EnemyTurnCardGameState.EnemyTurnBegan += RenderGlow;
     }
 
     private void OnDisable()
@@ -247,17 +248,18 @@ public class Card : MonoBehaviour
         PlayerTurnCardGameState.PlayerTurnEnded -= RenderGlow;
         Deck.PlayerDrewCard -= RenderGlow;
         DiscardPile.OnChange -= RenderGlow;
+        EnemyTurnCardGameState.EnemyTurnBegan -= RenderGlow;
     }
 
     private void RenderGlow()
     {
-        if(this._glowCoroutine != null)
-            StopCoroutine(this._glowCoroutine);
-
         bool shouldGlow = this.ShouldRegisterMouseEvents && PlayerTurnCardGameState.CanPlayerPlay && CanBePlayedOn(DiscardPile.Stack.Peek());
         if (this._glowing == shouldGlow) return;
 
         this._glowing = shouldGlow;
+        
+        if(this._glowCoroutine != null)
+            StopCoroutine(this._glowCoroutine);
         
         this._glowCoroutine = StartCoroutine(RenderGlowCoroutine(shouldGlow));
     }

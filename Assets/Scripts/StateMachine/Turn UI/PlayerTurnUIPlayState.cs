@@ -22,13 +22,11 @@ public class PlayerTurnUIPlayState : PlayerTurnUIState
     public override void Enter()
     {
         this.StateMachine.PlayerUI.gameObject.SetActive(true);
-        this.StateMachine.PlayerTurnTextUI.gameObject.SetActive(true);
     }
 
     public override void Exit()
     {
         this.StateMachine.PlayerUI.gameObject.SetActive(false);
-        this.StateMachine.PlayerTurnTextUI.gameObject.SetActive(false);
     }
 
     public void SelectColor()

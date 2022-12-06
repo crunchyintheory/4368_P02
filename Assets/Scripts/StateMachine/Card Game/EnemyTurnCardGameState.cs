@@ -29,7 +29,7 @@ public class EnemyTurnCardGameState : CardGameState, ICardGameTurnState
         CardGameSM.CurrentTurn = this;
         EnemyTurnBegan?.Invoke();
         this.HasPlayed = false;
-        this._enemyHandUI.text = $"Enemy Hand: {this.StateMachine.EnemyHand.Size}";
+        this._enemyHandUI.text = this.StateMachine.EnemyHand.Size.ToString();
 
         StartCoroutine(EnemyThinkingRoutine(this._pauseDuration));
     }
@@ -103,7 +103,7 @@ public class EnemyTurnCardGameState : CardGameState, ICardGameTurnState
             if (candidate == null)
             {
                 candidate = this.StateMachine.EnemyHand.Draw(this.StateMachine.Deck, 1)[0];
-                this._enemyHandUI.text = $"Enemy Hand: {this.StateMachine.EnemyHand.Size}";
+                this._enemyHandUI.text = this.StateMachine.EnemyHand.Size.ToString();
                 if (!candidate.CanBePlayedOn(topCard))
                     continue;
                 else
@@ -115,11 +115,11 @@ public class EnemyTurnCardGameState : CardGameState, ICardGameTurnState
                 (candidate as WildCard)?.SetColor(FindOptimalWildColor());
             }   
             candidate.Play();
-        
-            this._enemyHandUI.text = $"Enemy Hand: {this.StateMachine.EnemyHand.Size}";
+
+            this._enemyHandUI.text = this.StateMachine.EnemyHand.Size.ToString();
         }
         
-        this._enemyHandUI.text = $"Enemy Hand: {this.StateMachine.EnemyHand.Size}";
+        this._enemyHandUI.text = this.StateMachine.EnemyHand.Size.ToString();
         
         // After turn actions
         if (this.StateMachine.EnemyHand.Size == 0)

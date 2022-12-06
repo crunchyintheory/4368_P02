@@ -26,14 +26,12 @@ public class PlayerTurnUISelectColorState : PlayerTurnUIPlayState
     public override void Enter()
     {
         this.StateMachine.PlayerUI.gameObject.SetActive(false);
-        this.StateMachine.PlayerTurnTextUI.gameObject.SetActive(true);
         this._selectColorUI = Instantiate(this.StateMachine.SelectColorUI.gameObject, this.transform);
     }
 
     public override void Exit()
     {
         this.StateMachine.PlayerUI.gameObject.SetActive(true);
-        this.StateMachine.PlayerTurnTextUI.gameObject.SetActive(false);
         Destroy(this._selectColorUI);
     }
 

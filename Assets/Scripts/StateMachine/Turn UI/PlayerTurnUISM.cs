@@ -7,7 +7,6 @@ using UnityEngine.UI;
 public class PlayerTurnUISM : StateMachine
 {
     [SerializeField] public RectTransform PlayerUI = null;
-    [SerializeField] public Text PlayerTurnTextUI = null;
     [SerializeField] public RectTransform SelectColorUI = null;
     
     [SerializeField] private InputController _input;

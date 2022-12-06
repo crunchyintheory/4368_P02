@@ -9,7 +9,6 @@ public class PlayerTurnCardGameState : CardGameState, ICardGameTurnState
 {
     public static event Action PlayerTurnBegan;
     public static event Action PlayerTurnEnded;
-    [SerializeField] private Text _playerTurnTextUI = null;
     [SerializeField] private Text _playerHandUI = null;
 
     private int _playerTurnCount = 0;
@@ -53,10 +52,9 @@ public class PlayerTurnCardGameState : CardGameState, ICardGameTurnState
         PlayerTurnBegan?.Invoke();
         
         this._playerTurnCount++;
-        this._playerTurnTextUI.text = $"Player Turn: {this._playerTurnCount}";
         
         //Solve race condition
-        if(this.StateMachine.PlayerHand) this._playerHandUI.text = $"Player Hand: {this.StateMachine.PlayerHand.Size}";
+        if(this.StateMachine.PlayerHand) this._playerHandUI.text = this.StateMachine.PlayerHand.Size.ToString();
         //this.StateMachine.Input.PressedConfirm += OnPressedConfirm;
 
         // Temporary for demo purposes until an actual hand is implemented.
@@ -68,7 +66,6 @@ public class PlayerTurnCardGameState : CardGameState, ICardGameTurnState
     {
         CanPlayerPlay = false;
         CanPlayerDraw = false;
-        this._playerTurnTextUI.gameObject.SetActive(false);
         PlayerTurnEnded?.Invoke();
         
         //this.StateMachine.Input.PressedConfirm -= OnPressedConfirm;
@@ -88,10 +85,10 @@ public class PlayerTurnCardGameState : CardGameState, ICardGameTurnState
 
     public void OnCardPlayed()
     {
-        this._playerHandUI.text = $"Player Hand: {this.StateMachine.PlayerHand.Size}";
+        this._playerHandUI.text = this.StateMachine.PlayerHand.Size.ToString();
         if (this.StateMachine.PlayerHand.Size == 0)
         {
-            this.StateMachine.ChangeState<WinCardGameState>();
+            StartCoroutine(WinCoroutine());
             return;
         }
 
@@ -99,22 +96,10 @@ public class PlayerTurnCardGameState : CardGameState, ICardGameTurnState
             this.StateMachine.ChangeState<EnemyTurnCardGameState>();
     }
 
-    public void OnCardButtonPressed()
+    private IEnumerator WinCoroutine()
     {
-        this._playerHandUI.text = $"Player Hand: {this.StateMachine.PlayerHand.Size}";
-        if (this._playerCardCount == 0)
-        {
-            this.StateMachine.ChangeState<WinCardGameState>();
-        }
-    }
-
-    public void OnColorSelected()
-    {
-        this._playerHandUI.text = $"Player Hand: {this.StateMachine.PlayerHand.Size}";
-        if (this._playerCardCount == 0)
-        {
-            this.StateMachine.ChangeState<WinCardGameState>();
-        }
+        yield return new WaitForSeconds(1);
+        this.StateMachine.ChangeState<WinCardGameState>();
     }
 
     public void DrawEnemy(int count)

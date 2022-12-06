@@ -27,7 +27,7 @@ public class Hand : MonoBehaviour
         Card[] drawn = new Card[count];
         for (int i = 0; i < count; i++)
         {
-            Card card = deck.CardInstances.Dequeue();
+            Card card = deck.Draw();
             card.transform.SetParent(this.transform);
             this.Cards.Add(card);
             card.RegisterMouseEventsAfter = Time.time + time;
@@ -65,7 +65,7 @@ public class Hand : MonoBehaviour
 
     public void PopulateWithPlaceholder()
     {
-        Card card = this._deck.CardInstances.Dequeue();
+        Card card = this._deck.Draw();
         card.transform.SetParent(this.transform);
         this.Cards.Add(card);
         
