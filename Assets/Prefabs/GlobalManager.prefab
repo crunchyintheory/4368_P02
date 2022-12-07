@@ -566,7 +566,6 @@ RectTransform:
   - {fileID: 7584286717759585029}
   - {fileID: 10237985782739759}
   - {fileID: 1432131560}
-  - {fileID: 5105874747460840716}
   m_Father: {fileID: 7762943690530916274}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -670,7 +669,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   PlayerUI: {fileID: 583403120}
-  PlayerTurnTextUI: {fileID: 0}
   SelectColorUI: {fileID: 4003158634873848489, guid: 8831e3515d2eeca499e9392234f1e6c0,
     type: 3}
   _input: {fileID: 7762943691953350311}
@@ -932,14 +930,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5534796802675132406}
   m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: -837.6152, y: -471.1801, z: 0.6012}
+  m_LocalPosition: {x: -9.323425, y: 4.7374573, z: 0.5516361}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2370841494543765722}
   - {fileID: 2351173172243735794}
-  m_Father: {fileID: 1989676228}
-  m_RootOrder: 4
+  m_Father: {fileID: 7762943690530916274}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!1 &6704635778745240630
 GameObject:
@@ -1172,6 +1170,7 @@ Transform:
   m_Children:
   - {fileID: 7762943691749441514}
   - {fileID: 1989676228}
+  - {fileID: 5105874747460840716}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
