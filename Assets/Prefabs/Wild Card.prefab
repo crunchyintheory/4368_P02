@@ -141,6 +141,8 @@ MonoBehaviour:
   _glow: {fileID: 7819152254005743037}
   _glowIntensity: 2
   _glowSwapDuration: 0.5
+  _playSound: {fileID: 8300000, guid: ed328d77daf18fe49892f0e2e070d1ed, type: 3}
+  _particles: {fileID: 7059530593601909685}
   ShouldRegisterMouseEvents: 0
   RegisterMouseEventsAfter: 0
   OriginalPosition: {x: 0, y: 0, z: 0}
@@ -185,6 +187,12 @@ MonoBehaviour:
 --- !u!23 &7052462625164267992 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 4481459580654562391, guid: 4190cabcd7c08f94788a7381962e1105,
+    type: 3}
+  m_PrefabInstance: {fileID: 6912522792026848655}
+  m_PrefabAsset: {fileID: 0}
+--- !u!198 &7059530593601909685 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 4473846254046662202, guid: 4190cabcd7c08f94788a7381962e1105,
     type: 3}
   m_PrefabInstance: {fileID: 6912522792026848655}
   m_PrefabAsset: {fileID: 0}

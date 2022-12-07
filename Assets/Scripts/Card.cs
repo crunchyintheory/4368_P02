@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using Unity.VisualScripting;
+using UnityEditor;
 
 [Serializable]
 public struct CardData
@@ -62,6 +62,9 @@ public class Card : MonoBehaviour
     [SerializeField] private MeshRenderer _glow;
     [SerializeField] private float _glowIntensity = 1;
     [SerializeField] private float _glowSwapDuration = 2;
+
+    [SerializeField] private AudioClip _playSound;
+    [SerializeField] private ParticleSystem _particles;
 
     public bool ShouldRegisterMouseEvents = false;
     public float RegisterMouseEventsAfter = 0;
@@ -181,6 +184,9 @@ public class Card : MonoBehaviour
     {
         this.OnPlayed?.Invoke(this);
 
+        if (this._playSound) AudioHelper.PlayClip2D(this._playSound, 1.0f);
+        if (this._particles && (this._flag != UnoFlag.None || this.IsWild)) StartCoroutine(PlayCoroutine());
+
         switch (this._flag)
         {
             case UnoFlag.Draw:
@@ -193,6 +199,12 @@ public class Card : MonoBehaviour
         }
         
         DiscardPile.Instance.Discard(this);
+    }
+
+    private IEnumerator PlayCoroutine()
+    {
+        yield return new WaitForSeconds(0.5f);
+        this._particles.Play();
     }
 
     protected virtual void Start()

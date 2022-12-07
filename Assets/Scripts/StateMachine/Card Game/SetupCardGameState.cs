@@ -47,10 +47,10 @@ public class SetupCardGameState : CardGameState
         this.StateMachine.PlayerHand = Instantiate(this._handPrefab, this._playerHandPosition, Quaternion.Euler(this._playerHandRotation));
         this.StateMachine.PlayerHand.isPlayerHand = true;
         this.StateMachine.Deck.PlayerHand = this.StateMachine.PlayerHand;
-        this.StateMachine.PlayerHand.Draw(this.StateMachine.Deck, this._startingHandSize, 1f);
+        this.StateMachine.PlayerHand.Draw(this.StateMachine.Deck, this._startingHandSize, 1f, true);
         
         this.StateMachine.EnemyHand = Instantiate(this._handPrefab, this._enemyHandPosition, Quaternion.Euler(this._enemyHandRotation));
-        this.StateMachine.EnemyHand.Draw(this.StateMachine.Deck, this._startingHandSize, 1f);
+        this.StateMachine.EnemyHand.Draw(this.StateMachine.Deck, this._startingHandSize, 1f, true);
 
         this.StateMachine.Discard = Instantiate(this._discardPrefab, this._discardPosition, Quaternion.identity);
         this.StateMachine.Discard.Discard(this.StateMachine.Deck.Draw());

@@ -22,12 +22,12 @@ public class Hand : MonoBehaviour
         return this.Cards.Any(x => x.CanBePlayedOn(DiscardPile.TopCard));
     }
 
-    public Card[] Draw(Deck deck, int count, float time = 0.5f)
+    public Card[] Draw(Deck deck, int count, float time = 0.5f, bool isInitialDraw = false)
     {
         Card[] drawn = new Card[count];
         for (int i = 0; i < count; i++)
         {
-            Card card = deck.Draw();
+            Card card = deck.Draw(isInitialDraw);
             card.transform.SetParent(this.transform);
             this.Cards.Add(card);
             card.RegisterMouseEventsAfter = Time.time + time;

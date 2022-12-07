@@ -29,6 +29,9 @@ public class Deck : MonoBehaviour
     [SerializeField] private MeshRenderer _glow;
     [SerializeField] private float _glowIntensity = 1;
     [SerializeField] private float _glowSwapDuration = 2;
+
+    [SerializeField] private AudioClip _shuffleSound;
+    [SerializeField] private AudioClip _drawSound;
     
     public static event Action PlayerDrewCard;
     
@@ -112,6 +115,8 @@ public class Deck : MonoBehaviour
             this._numInstances++;
             heightOffset -= 0.0002f;
         }
+
+        if(this._shuffleSound) AudioHelper.PlayClip2D(this._shuffleSound, 1);
     }
 
     private void OnMouseUp()
@@ -132,8 +137,10 @@ public class Deck : MonoBehaviour
         return this.CardInstances.Peek();
     }
 
-    public Card Draw()
+    public Card Draw(bool isInitialDraw = false)
     {
+        if (this._drawSound && !isInitialDraw) AudioHelper.PlayClip2D(this._drawSound, 1);
+        
         bool hasCard = this.CardInstances.TryPop(out Card card);
         
         if (hasCard)

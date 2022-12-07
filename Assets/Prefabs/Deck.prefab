@@ -176,6 +176,8 @@ MonoBehaviour:
   _glow: {fileID: 7206421434758599190}
   _glowIntensity: 0.8
   _glowSwapDuration: 1
+  _shuffleSound: {fileID: 8300000, guid: 5b0fc3bba94ea7749974871c46fe0fa2, type: 3}
+  _drawSound: {fileID: 8300000, guid: ea246951b33e9c2478d977364cb0f83e, type: 3}
 --- !u!65 &1128949342129119987
 BoxCollider:
   m_ObjectHideFlags: 0

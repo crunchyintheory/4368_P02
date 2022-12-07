@@ -82,6 +82,9 @@ public class CardGameUIController : MonoBehaviour
     void OnGameOverEntered()
     {
         this._gameOverUI.gameObject.SetActive(true);
+        this._playerHandSizeUIContainer.gameObject.SetActive(false);
+        this._enemyHandSizeUIContainer.gameObject.SetActive(false);
+        this._playerTurnIndicator.transform.parent.parent.gameObject.SetActive(false);
     }
 
     void OnGameOverExited()
