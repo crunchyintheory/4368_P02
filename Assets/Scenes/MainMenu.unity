@@ -5499,7 +5499,7 @@ ParticleSystem:
     vectorComponentCount0: 4
     color0:
       serializedVersion: 2
-      minMaxState: 1
+      minMaxState: 0
       minColor: {r: 0, g: 0.08463931, b: 1, a: 1}
       maxColor: {r: 1, g: 0, b: 0, a: 1}
       maxGradient:
