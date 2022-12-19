@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using JetBrains.Annotations;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
@@ -22,21 +24,33 @@ public class Hand : MonoBehaviour
         return this.Cards.Any(x => x.CanBePlayedOn(DiscardPile.TopCard));
     }
 
-    public Card[] Draw(Deck deck, int count, float time = 0.5f, bool isInitialDraw = false)
+    public async IAsyncEnumerable<Card> DrawAsync(Deck deck, int count, float time = 0.5f, bool isInitialDraw = false)
     {
-        Card[] drawn = new Card[count];
         for (int i = 0; i < count; i++)
         {
-            Card card = deck.Draw(isInitialDraw);
+            Card card = await deck.Draw(isInitialDraw);
             card.transform.SetParent(this.transform);
             this.Cards.Add(card);
             card.RegisterMouseEventsAfter = Time.time + time;
             card.OnPlayed += OnPlay;
-            drawn[i] = card;
+            yield return card;
         }
         
         Rearrange(time);
-        return drawn;
+    }
+
+    public async Task<Card[]> Draw(Deck deck, int count, float time = 0.5f, bool isInitialDraw = false)
+    {
+        Card[] cards = new Card[count];
+        IAsyncEnumerator<Card> it = DrawAsync(deck, count, time, isInitialDraw).GetAsyncEnumerator();
+        for (int i = 0; i < count; i++)
+        {
+            await it.MoveNextAsync();
+            cards[i] = it.Current;
+        }
+
+        Rearrange(time);
+        return cards;
     }
 
     private void Rearrange(float time = 1f)
@@ -63,9 +77,9 @@ public class Hand : MonoBehaviour
         }
     }
 
-    public void PopulateWithPlaceholder()
+    public async void PopulateWithPlaceholder()
     {
-        Card card = this._deck.Draw();
+        Card card = await this._deck.Draw();
         card.transform.SetParent(this.transform);
         this.Cards.Add(card);
         

@@ -10,6 +10,7 @@ public class PlayerTurnCardGameState : CardGameState, ICardGameTurnState
     public static event Action PlayerTurnBegan;
     public static event Action PlayerTurnEnded;
     [SerializeField] private Text _playerHandUI = null;
+    [SerializeField] private Vector3 _speechBubblePosition;
 
     private int _playerTurnCount = 0;
 
@@ -29,6 +30,8 @@ public class PlayerTurnCardGameState : CardGameState, ICardGameTurnState
     public static Deck Deck => Instance.StateMachine.Deck;
 
     public static PlayerTurnCardGameState Instance;
+    
+    private ParticleSystem _speechBubble;
 
     protected override void Awake()
     {
@@ -77,6 +80,11 @@ public class PlayerTurnCardGameState : CardGameState, ICardGameTurnState
         //this.StateMachine.Input.PressedCancel -= OnColorSelected;
     }
 
+    public void CreateSpeechBubble(ParticleSystem _prefab)
+    {
+        this._speechBubble = Instantiate(_prefab, this._speechBubblePosition, Quaternion.identity);
+    }
+
     private void OnPressedConfirm()
     {
         Debug.Log("Attempt to enter Enemy State!");
@@ -90,6 +98,10 @@ public class PlayerTurnCardGameState : CardGameState, ICardGameTurnState
         {
             StartCoroutine(WinCoroutine());
             return;
+        }
+        else if (this.StateMachine.PlayerHand.Size == 1)
+        {
+            this._speechBubble.Play();
         }
 
         if (!CanPlayerPlay)

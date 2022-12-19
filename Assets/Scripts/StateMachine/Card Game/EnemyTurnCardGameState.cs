@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,13 +16,23 @@ public class EnemyTurnCardGameState : CardGameState, ICardGameTurnState
     public static event Action EnemyTurnBegan;
     public static event Action EnemyTurnEnded;
 
+    public static EnemyTurnCardGameState Instance;
+
     [SerializeField] private float _pauseDuration = 1.5f;
     [SerializeField] private Text _enemyHandUI = null;
     [SerializeField] private int _playerHandCriticalSize = 3;
+    [SerializeField] private Vector3 _speechBubblePosition;
+
+    private ParticleSystem _speechBubble;
 
     private int _enemyCardCount = 7;
 
     private bool HasPlayed;
+
+    public void CreateSpeechBubble(ParticleSystem _prefab)
+    {
+        this._speechBubble = Instantiate(_prefab, this._speechBubblePosition, Quaternion.identity);
+    }
 
     public override void Enter()
     {
@@ -31,12 +42,24 @@ public class EnemyTurnCardGameState : CardGameState, ICardGameTurnState
         this.HasPlayed = false;
         this._enemyHandUI.text = this.StateMachine.EnemyHand.Size.ToString();
 
-        StartCoroutine(EnemyThinkingRoutine(this._pauseDuration));
+        EnemyThinkingRoutine(this._pauseDuration);
     }
 
     public override void Exit()
     {
         Debug.Log("Enemy Turn: Exit...");
+    }
+
+    protected override void Awake()
+    {
+        base.Awake();
+        if (Instance != null)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+
+        Instance = this;
     }
 
     private Card.UnoColor FindOptimalWildColor()
@@ -59,13 +82,13 @@ public class EnemyTurnCardGameState : CardGameState, ICardGameTurnState
         return weights.OrderBy(x => x.Value).Last().Key;
     }
 
-    private IEnumerator EnemyThinkingRoutine(float pauseDuration)
+    private async Task EnemyThinkingRoutine(float pauseDuration)
     {
         while (!this.HasPlayed && this.StateMachine.EnemyHand.Size > 0)
         {
             this.HasPlayed = true;
             Debug.Log("Enemy thinking...");
-            yield return new WaitForSeconds(pauseDuration);
+            await Task.Delay(Mathf.FloorToInt(pauseDuration * 1000));
         
             Debug.Log("Enemy performs action");
 
@@ -102,12 +125,12 @@ public class EnemyTurnCardGameState : CardGameState, ICardGameTurnState
             
             if (candidate == null)
             {
-                candidate = this.StateMachine.EnemyHand.Draw(this.StateMachine.Deck, 1)[0];
+                candidate = (await this.StateMachine.EnemyHand.Draw(this.StateMachine.Deck, 1))[0];
                 this._enemyHandUI.text = this.StateMachine.EnemyHand.Size.ToString();
                 if (!candidate.CanBePlayedOn(topCard))
                     continue;
                 else
-                    yield return new WaitForSeconds(pauseDuration);
+                    await Task.Delay(Mathf.FloorToInt(pauseDuration * 1000));
             }
 
             if (candidate.IsWild)
@@ -124,19 +147,22 @@ public class EnemyTurnCardGameState : CardGameState, ICardGameTurnState
         // After turn actions
         if (this.StateMachine.EnemyHand.Size == 0)
         {
-            yield return new WaitForSeconds(pauseDuration);
+            await Task.Delay(Mathf.FloorToInt(pauseDuration * 1000));
             this.StateMachine.ChangeState<LoseCardGameState>();
+            return;
         }
-        else
+        else if (this.StateMachine.EnemyHand.Size == 1)
         {
-            EnemyTurnEnded?.Invoke();
-            this.StateMachine.ChangeState<PlayerTurnCardGameState>();            
+            this._speechBubble.Play();
         }
+        
+        EnemyTurnEnded?.Invoke();
+        this.StateMachine.ChangeState<PlayerTurnCardGameState>();
     }
 
-    public void DrawEnemy(int count)
+    public async void DrawEnemy(int count)
     {
-        this.StateMachine.PlayerHand.Draw(this.StateMachine.Deck, count);
+        await this.StateMachine.PlayerHand.Draw(this.StateMachine.Deck, count);
     }
 
     public void SkipEnemyTurn()

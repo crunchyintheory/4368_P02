@@ -291,4 +291,10 @@ public class Card : MonoBehaviour
         this._currentIntensity = Mathf.Lerp(startIntensity, intensity, 1);
         this._glow.material.SetFloat("_Intensity", this._currentIntensity);
     }
+
+    public virtual void ResetInstance()
+    {
+        // No variables to reset in the base card, only wild cards, but we call render for compatibility
+        Render();
+    }
 }

@@ -7,6 +7,7 @@ public class MainMenuCardGameState : CardGameState
     public override void Enter()
     {
         Debug.Log("Main Menu: ...Entering");
+        
         if(SceneLoader.CurrentSceneName != "MainMenu")
             SceneLoader.LoadScene("MainMenu");
     }

@@ -18,17 +18,24 @@ public abstract class GameOverCardGameState : CardGameState
             SceneLoader.LoadScene("GameOverScene");
         this._textElement.text = this.text;
         this.StateMachine.Input.PressedCancel += OnCancel;
+        this.StateMachine.Input.PressedConfirm += OnConfirm;
         OnGameOverEntered?.Invoke();
     }
 
     public override void Exit()
     {
         this.StateMachine.Input.PressedCancel -= OnCancel;
+        this.StateMachine.Input.PressedConfirm -= OnConfirm;
         OnGameOverExited?.Invoke();
     }
 
     private void OnCancel()
     {
         Application.Quit();
+    }
+
+    private void OnConfirm()
+    {
+        this.StateMachine.ChangeState<MainMenuCardGameState>();
     }
 }

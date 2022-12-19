@@ -15,6 +15,7 @@ public class CardGameUIController : MonoBehaviour
     [SerializeField] private GameObject _enemyHandSizeUIContainer = null;
     [SerializeField] private Text _enemyHandSizeUI = null;
     [SerializeField] private RectTransform _gameOverUI = null;
+    [SerializeField] private RectTransform _mainMenuUI = null;
 
     private void OnEnable()
     {
@@ -71,12 +72,15 @@ public class CardGameUIController : MonoBehaviour
     {
         this._playerHandSizeUIContainer.gameObject.SetActive(true);
         this._enemyHandSizeUIContainer.gameObject.SetActive(true);
+        this._mainMenuUI.gameObject.SetActive(false);
+        this._playerTurnIndicator.transform.parent.parent.gameObject.SetActive(true);
     }
 
     void OnGameEnded()
     {
         this._playerHandSizeUIContainer.gameObject.SetActive(false);
         this._enemyHandSizeUIContainer.gameObject.SetActive(false);
+        this._playerTurnIndicator.transform.parent.parent.gameObject.SetActive(false);
     }
 
     void OnGameOverEntered()
@@ -84,11 +88,11 @@ public class CardGameUIController : MonoBehaviour
         this._gameOverUI.gameObject.SetActive(true);
         this._playerHandSizeUIContainer.gameObject.SetActive(false);
         this._enemyHandSizeUIContainer.gameObject.SetActive(false);
-        this._playerTurnIndicator.transform.parent.parent.gameObject.SetActive(false);
     }
 
     void OnGameOverExited()
     {
         this._gameOverUI.gameObject.SetActive(false);
+        this._mainMenuUI.gameObject.SetActive(true);
     }
 }

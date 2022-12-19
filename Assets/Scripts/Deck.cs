@@ -1,6 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -47,6 +50,31 @@ public class Deck : MonoBehaviour
         }
     }
 
+    public static List<KeyValuePair<int, T>> Shuffle<T>([NotNull] IEnumerable<T> list, int iterations = 1)
+    {
+        if (iterations <= 0) throw new Exception("Invalid iterations");
+        
+        List<KeyValuePair<int, T>> shuffled = list.Select(item =>
+        {
+            int random = Random.Range(int.MinValue, int.MaxValue);
+            return new KeyValuePair<int, T>(random, item);
+        }).ToList();
+        shuffled.Sort((x, y) => x.Key.CompareTo(y.Key));
+
+        for (int i = 1; i < iterations; i++)
+        {
+            shuffled = shuffled.Select(t => new KeyValuePair<int, T>(Random.Range(int.MinValue, int.MaxValue), t.Value)).ToList();
+            shuffled.Sort((x, y) => x.Key.CompareTo(y.Key));
+        }
+        
+        return shuffled;
+    }
+
+    public static void ShuffleToList<T>([NotNull] IEnumerable<T> list, [CanBeNull] out List<T> shuffled, int iterations = 1)
+    {
+        shuffled = Shuffle(list, iterations).Select(x => x.Value).ToList();
+    }
+
     public void ResetDeck()
     {
         if (this.CardInstances == null)
@@ -76,12 +104,15 @@ public class Deck : MonoBehaviour
         
         float heightOffset = 0;
         
-        List<KeyValuePair<int, CardData>> _shuffled = new();
+        List<CardData> cards = new();
+        int current = 0;
         foreach (DeckPreset data in this._initialCards)
         {
             for (int i = 0; i < data.Count; i++)
             {
-                _shuffled.Add(new KeyValuePair<int, CardData>(Random.Range(1, 108), data.Card));
+                cards.Add(data.Card);
+
+                if (++current >= 20) goto skip;
             }
             for (int i = 0; i < data.CountPerColor; i++)
             {
@@ -89,15 +120,19 @@ public class Deck : MonoBehaviour
                 {
                     CardData card = data.Card;
                     card.Color = color;
-                    _shuffled.Add(new KeyValuePair<int, CardData>(Random.Range(1, 108), card));
+                    cards.Add(card);
+
+                    if (++current >= 20) goto skip;
                 }
             }
         }
+        
+        skip:
 
-        _shuffled.Sort((x, y) => x.Key.CompareTo(y.Key));
+        List<KeyValuePair<int, CardData>> shuffled = Shuffle(cards, 3);
 
         int number = 1;
-        foreach ((_, CardData data) in _shuffled)
+        foreach ((_, CardData data) in shuffled)
         {
             Card template = data.IsWild ? this._wildTemplate : this._template;
 
@@ -119,10 +154,10 @@ public class Deck : MonoBehaviour
         if(this._shuffleSound) AudioHelper.PlayClip2D(this._shuffleSound, 1);
     }
 
-    private void OnMouseUp()
+    private async void OnMouseUp()
     {
         if (!PlayerTurnCardGameState.CanPlayerDraw) return;
-        this.PlayerHand.Draw(this, 1);
+        await this.PlayerHand.Draw(this, 1);
         PlayerTurnCardGameState.HasDrawn = true;
         if (!this.PlayerHand.HasValidPlay())
         {
@@ -137,37 +172,58 @@ public class Deck : MonoBehaviour
         return this.CardInstances.Peek();
     }
 
-    public Card Draw(bool isInitialDraw = false)
+    private Task _shufflingTask;
+
+    public async Task<Card> Draw(bool isInitialDraw = false)
     {
         if (this._drawSound && !isInitialDraw) AudioHelper.PlayClip2D(this._drawSound, 1);
-        
-        bool hasCard = this.CardInstances.TryPop(out Card card);
-        
-        if (hasCard)
-            return card;
 
+        if(this._shufflingTask is {IsCompleted: false})
+            Task.WaitAll(this._shufflingTask);
+
+        this.CardInstances.TryPop(out Card card);
+
+        if(this.CardInstances.Count == 0) ShuffleDiscardIntoDeck();
+
+        return card;
+    }
+
+    private async Task ShuffleDiscardIntoDeck()
+    {
         Card top = DiscardPile.Instance.Cards.Pop();
         float heightOffset = 0;
-        while(DiscardPile.Instance.Cards.TryPop(out card))
+        
+        // shuffle the following cards
+        List<Card> cards = new();
+        
+        while(DiscardPile.Instance.Cards.TryPop(out Card card))
+        {
+            card.ResetInstance();
+            cards.Add(card);
+        }
+
+        List<KeyValuePair<int, Card>> shuffled = Shuffle(cards, 3);
+        
+        foreach((int _, Card card) in shuffled)
         {
             this.CardInstances.Push(card);
-
+            card.transform.SetParent(this.transform);
             Vector3 position = this.transform.position + new Vector3(0, heightOffset, 0);
-            Quaternion rotation = Quaternion.Euler(0, 0, 0);
+            Quaternion rotation = Quaternion.Euler(-90, 0, 0);
         
             card.AnimateTo(position, rotation, 0.5f);
-
             heightOffset += 0.0002f;
         }
-        
+
+        // put the discarded card back
         DiscardPile.Instance.Discard(top);
-        return this.CardInstances.Pop();
     }
 
     private void OnEnable()
     {
         PlayerTurnCardGameState.PlayerTurnBegan += RenderGlow;
         PlayerTurnCardGameState.PlayerTurnEnded += RenderGlow;
+        DiscardPile.OnChange += RenderGlow;
         PlayerDrewCard += RenderGlow;
     }
 
@@ -175,6 +231,7 @@ public class Deck : MonoBehaviour
     {
         PlayerTurnCardGameState.PlayerTurnBegan -= RenderGlow;
         PlayerTurnCardGameState.PlayerTurnEnded -= RenderGlow;
+        DiscardPile.OnChange -= RenderGlow;
         PlayerDrewCard -= RenderGlow;
     }
 

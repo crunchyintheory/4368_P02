@@ -12,6 +12,7 @@ public class SetupCardGameState : CardGameState
     [SerializeField] private Deck _deckPrefab;
     [SerializeField] private Hand _handPrefab;
     [SerializeField] private DiscardPile _discardPrefab;
+    [SerializeField] private ParticleSystem _speechBubblePrefab;
     
     [SerializeField] private int _startingCardNumber = 104;
     [SerializeField] private int _startingHandSize = 7;
@@ -41,24 +42,31 @@ public class SetupCardGameState : CardGameState
 
         yield return new WaitForFixedUpdate();
         
+        LoadGameScene();
+    }
+
+    private async void LoadGameScene()
+    {
         this.StateMachine.Deck = Instantiate(this._deckPrefab, this._deckPosition, Quaternion.identity);
         this.StateMachine.Deck.ResetDeck(); 
         
         this.StateMachine.PlayerHand = Instantiate(this._handPrefab, this._playerHandPosition, Quaternion.Euler(this._playerHandRotation));
         this.StateMachine.PlayerHand.isPlayerHand = true;
         this.StateMachine.Deck.PlayerHand = this.StateMachine.PlayerHand;
-        this.StateMachine.PlayerHand.Draw(this.StateMachine.Deck, this._startingHandSize, 1f, true);
-        
+        await this.StateMachine.PlayerHand.Draw(this.StateMachine.Deck, this._startingHandSize, 1f, true);
+
         this.StateMachine.EnemyHand = Instantiate(this._handPrefab, this._enemyHandPosition, Quaternion.Euler(this._enemyHandRotation));
-        this.StateMachine.EnemyHand.Draw(this.StateMachine.Deck, this._startingHandSize, 1f, true);
+        await this.StateMachine.EnemyHand.Draw(this.StateMachine.Deck, this._startingHandSize, 1f, true);
 
         this.StateMachine.Discard = Instantiate(this._discardPrefab, this._discardPosition, Quaternion.identity);
-        this.StateMachine.Discard.Discard(this.StateMachine.Deck.Draw());
+        this.StateMachine.Discard.Discard(await this.StateMachine.Deck.Draw());
         while (DiscardPile.TopCard.IsWild)
         {
-            this.StateMachine.Discard.Discard(this.StateMachine.Deck.Draw());
+            this.StateMachine.Discard.Discard(await this.StateMachine.Deck.Draw());
         }
-            
+        
+        PlayerTurnCardGameState.Instance.CreateSpeechBubble(this._speechBubblePrefab);
+        EnemyTurnCardGameState.Instance.CreateSpeechBubble(this._speechBubblePrefab);
         
         this.StateMachine.ChangeState<PlayerTurnCardGameState>();
     }

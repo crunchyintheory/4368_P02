@@ -49,12 +49,18 @@ public class WildCard : Card
         PlayerTurnCardGameState.HasDrawn = true;
     }
 
-    public void OnColorChosen(Card.UnoColor color)
+    public void OnColorChosen(UnoColor color)
     {
         PlayerTurnUISelectColorState.OnColorSelected -= OnColorChosen;
         SetColor(color);
         Play();
         PlayerTurnCardGameState.DisableDrawing = false;
         PlayerTurnCardGameState.Instance.OnCardPlayed();
+    }
+
+    public override void ResetInstance()
+    {
+        this._colorChosen = false;
+        base.ResetInstance();
     }
 }
