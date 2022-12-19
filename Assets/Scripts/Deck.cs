@@ -105,14 +105,11 @@ public class Deck : MonoBehaviour
         float heightOffset = 0;
         
         List<CardData> cards = new();
-        int current = 0;
         foreach (DeckPreset data in this._initialCards)
         {
             for (int i = 0; i < data.Count; i++)
             {
                 cards.Add(data.Card);
-
-                if (++current >= 20) goto skip;
             }
             for (int i = 0; i < data.CountPerColor; i++)
             {
@@ -121,13 +118,9 @@ public class Deck : MonoBehaviour
                     CardData card = data.Card;
                     card.Color = color;
                     cards.Add(card);
-
-                    if (++current >= 20) goto skip;
                 }
             }
         }
-        
-        skip:
 
         List<KeyValuePair<int, CardData>> shuffled = Shuffle(cards, 3);
 
